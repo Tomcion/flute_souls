@@ -65,6 +65,7 @@ def frequency_spectrum(sample, max_frequency=5000):
 def callback(bytes, frame_count, time_info, status):
     # global freq_array1
     # global freq_magnitude1
+    global note_playing
 
     sound = AudioSegment(
         data=bytes,
@@ -75,13 +76,12 @@ def callback(bytes, frame_count, time_info, status):
     # .high_pass_filter(100).low_pass_filter(10000)
 
     # print(sound.dBFS)
-    note_playing = False
 
     if sound.dBFS > MIN_NOTE_VOLUME:
         # print(sound.dBFS)
         freq_array, freq_magnitude = frequency_spectrum(sound)
         # print(freq_array)
-        peak_indicies, props = find_peaks(freq_magnitude, height=0.015)
+        peak_indicies, props = find_peaks(freq_magnitude, height=0.01)
         heights = props["peak_heights"]
         sorted_indicies = [
             x for (y, x) in sorted(
@@ -113,20 +113,19 @@ def callback(bytes, frame_count, time_info, status):
         elif freq_index == 16:
             note = "D#2"
 
-        if note == "":
-            note_playing = False
-        else:
+        if note != "" and not note_playing:
             note_playing = True
+            print("start", note)
+        elif note != "" and note_playing:
+            pass
+        elif note == "" and note_playing:
+            print("atonal")
+            note_playing = False
+        elif note == "" and not note_playing:
+            pass
         
-        print(note)
-        line = ""
-        for i, peak in enumerate(sorted_indicies):
-            freq = freq_array[peak]
-            magnitude = sorted_heights[i]
-            line += str(peak) + "    "
+        # print(note)
 
-        line += "\n"
-        # print(line)
         # if note == "A1" and not is_walking:
         #     is_walking = True
         #     walkForward()
@@ -147,45 +146,11 @@ def callback(bytes, frame_count, time_info, status):
         #     lockOn()
         # elif note == "D#2":
         #     collect()
+    else:
+        if note_playing:
+            print("stop")
+            note_playing = False
 
-        # f.write(line)
-        # print(start)
-        # print(time.time())
-        # print(start - time.time())
-        # if time.time() - start >= 20:
-        #     return (bytes, pyaudio.paComplete)
-
-    # if sound.dBFS > MIN_NOTE_VOLUME:
-    #     print(sound.dBFS)
-    #     freq_array, freq_magnitude = frequency_spectrum(sound)
-    #     peak_indicies, props = find_peaks(freq_magnitude, height=0.015)
-    #     # print(freq_array)
-    #     # print(freq_array[peak_indicies[0]], props["peak_heights"][0])
-    #     # print(freq_array[peak_indicies[1]], props["peak_heights"][1])
-    #     # print(freq_array[peak_indicies[2]], props["peak_heights"][2])
-    #     note = peak_indicies[0]
-    #     if note == 7:
-    #         PressKey(0x57) # w
-    #         # time.sleep(0.1)    
-    #         ReleaseKey(0x57)
-    #     if note == 10:
-    #         PressKey(0x53) # s
-    #         # time.sleep(0.1)    
-    #         ReleaseKey(0x53)
-    #     if note == 8:
-    #         PressKey(0x41) # a
-    #         # time.sleep(0.1)    
-    #         ReleaseKey(0x41)
-    #     if note == 9:
-    #         PressKey(0x44) # d
-    #         # time.sleep(0.1)    
-    #         ReleaseKey(0x44)
-    #     for i, peak in enumerate(peak_indicies):
-    #         freq = freq_array[peak]
-    #         magnitude = props["peak_heights"][i]
-    #         print("{}hz with magnitude {:.3f}".format(freq, magnitude))
-    #     # return (bytes, pyaudio.paComplete)
-    print(note_playing)
     return (bytes, pyaudio.paContinue)
 
 p = pyaudio.PyAudio()
@@ -204,23 +169,3 @@ while stream.is_active():
 stream.close()
 p.terminate()
 f.close()
-
-
-# while True:
-#     p = pyaudio.PyAudio()
-#     stream = p.open(format=p.get_format_from_width(SAMPLE_WIDTH),
-#                     channels=CHANNELS,
-#                     rate=RATE,
-#                     input=True,
-#                     output=False,
-#                     stream_callback=callback)
-
-#     start = time.time()
-#     while stream.is_active() and (time.time() - start) < RECORD_SECONDS:
-#         time.sleep(0.1)
-
-#     plt.plot(freq_array1, freq_magnitude1, 'b')
-#     plt.show()
-
-#     stream.close()
-#     p.terminate()
