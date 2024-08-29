@@ -66,6 +66,7 @@ def callback(bytes, frame_count, time_info, status):
     # global freq_array1
     # global freq_magnitude1
     global note_playing
+    global is_walking
 
     sound = AudioSegment(
         data=bytes,
@@ -92,8 +93,17 @@ def callback(bytes, frame_count, time_info, status):
         ]
         sorted_heights = sorted(heights, reverse=True)
         freq_index = sorted_indicies[0]
+        line = ""
+        for i, peak in enumerate(sorted_indicies):
+            freq = freq_array[peak]
+            magnitude = sorted_heights[i]
+            line += str(peak) + "    "
+
+        line += "\n"
+        # print(line)
+
         note = ""
-        if freq_index == 7:
+        if freq_index == 7 or freq_index == 13 or freq_index == 13:
             note = "C1"
         elif freq_index == 8:
             note = "D1"
@@ -103,11 +113,11 @@ def callback(bytes, frame_count, time_info, status):
             note = "G1"
         elif freq_index == 11 or freq_index == 12:
             note = "A1"
-        elif freq_index == 13 or freq_index == 14:
-            if freq_index == 14 and 7 in sorted_indicies:
-                note = "C1"
-            else:
-                note = "C2"
+        # elif freq_index == 13 or freq_index == 14:
+        #     if 7 in sorted_indicies:
+        #         note = "C1"
+        #     else:
+        #         note = "C2"
         elif freq_index == 15:
             note = "E2"
         elif freq_index == 16:
@@ -115,41 +125,40 @@ def callback(bytes, frame_count, time_info, status):
 
         if note != "" and not note_playing:
             note_playing = True
-            print("start", note)
-        elif note != "" and note_playing:
-            pass
+            if is_walking == True and not note in ("C1", "D1"):
+                is_walking = False
+                # stopWalkForward()
+                print("stop walk")
+            elif note == "G1" and not is_walking:
+                is_walking = True
+                # walkForward()
+                print("start walk")
+
+            if note == "F1":
+                heal()
+            elif note == "A1":
+                roll()
+            elif note == "C2":
+                lockOn()
+            elif note == "E2":
+                attack()
+            elif note == "D#2":
+                collect()
         elif note == "" and note_playing:
-            print("atonal")
             note_playing = False
-        elif note == "" and not note_playing:
-            pass
+            print("atonal")
         
         # print(note)
 
-        # if note == "A1" and not is_walking:
-        #     is_walking = True
-        #     walkForward()
-        # elif note == "A1":
-        #     is_walking = False
 
         if note == "C1":
             rotateRight(CHUNK / RATE)
         elif note == "D1":
             rotateLeft(CHUNK / RATE)
-        # elif note == "F1":
-        #     heal()
-        # elif note == "G1":
-        #     roll()
-        # elif note == "C2":
-        #     attack()
-        # elif note == "E2":
-        #     lockOn()
-        # elif note == "D#2":
-        #     collect()
     else:
         if note_playing:
-            print("stop")
             note_playing = False
+            print("silent")
 
     return (bytes, pyaudio.paContinue)
 
