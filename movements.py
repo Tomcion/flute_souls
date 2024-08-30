@@ -1,3 +1,5 @@
+import time
+
 import pydirectinput as pd
 import pyautogui as pg
 import vgamepad as vg
@@ -21,14 +23,6 @@ JMAX = 32767
 
 gamepad = vg.VX360Gamepad()
 
-def attack():
-    # pg.click()
-    # mouse.click('left')
-    gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
-    gamepad.update()
-    gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
-    gamepad.update()
-
 def rotateRight():
     # posX, posY = mouse.get_position()
     # posX += rotateAmount
@@ -51,9 +45,19 @@ def stopRotate():
     gamepad.right_joystick(x_value=0, y_value=0)
     gamepad.update()
 
+def attack():
+    # pg.click()
+    # mouse.click('left')
+    gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
+    gamepad.update()
+    time.sleep(0.1)
+    gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
+    gamepad.update()
+
 def heal():
     gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_X)
     gamepad.update()
+    time.sleep(0.1)
     gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_X)
     gamepad.update()
     # PressKey(VK_R)
@@ -62,6 +66,7 @@ def heal():
 def lockOn():
     gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_THUMB)
     gamepad.update()
+    time.sleep(0.1)
     gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_THUMB)
     gamepad.update()
     # PressKey(VK_Q)
@@ -70,6 +75,7 @@ def lockOn():
 def collect():
     gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_A)
     gamepad.update()
+    time.sleep(0.1)
     gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_A)
     gamepad.update()
     # PressKey(VK_E)
@@ -77,8 +83,9 @@ def collect():
 
 def roll():
     gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_B)
-    gamepad.left_joystick(x_value=JMAX, y_value=0)
+    gamepad.left_joystick(x_value=0, y_value=JMAX)
     gamepad.update()
+    time.sleep(0.1)
     gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_B)
     gamepad.left_joystick(x_value=0, y_value=0)
     gamepad.update()
@@ -89,7 +96,7 @@ def roll():
 
 def walkForward():
     # PressKey(VK_W)
-    gamepad.left_joystick(x_value=JMAX, y_value=0)
+    gamepad.left_joystick(x_value=0, y_value=JMAX)
     gamepad.update()
 
 def stopWalkForward():

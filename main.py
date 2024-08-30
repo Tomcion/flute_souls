@@ -32,6 +32,7 @@ freq_magnitude1 = []
 start = time.time()
 
 is_walking = False
+is_rotating = False
 note_playing = False
 
 def frequency_spectrum(sample, max_frequency=5000):
@@ -67,6 +68,7 @@ def callback(bytes, frame_count, time_info, status):
     # global freq_magnitude1
     global note_playing
     global is_walking
+    global is_rotating
 
     sound = AudioSegment(
         data=bytes,
@@ -136,7 +138,13 @@ def callback(bytes, frame_count, time_info, status):
                 walkForward()
                 # print("start walk")
 
-            if note == "F1":
+            if note == "C1":
+                rotateRight()
+                is_rotating = True
+            elif note == "D1":
+                rotateLeft()
+                is_rotating = True
+            elif note == "F1":
                 heal()
             elif note == "A1":
                 roll()
@@ -153,13 +161,12 @@ def callback(bytes, frame_count, time_info, status):
         print(note)
 
 
-        if note == "C1":
-            rotateRight()
-        elif note == "D1":
-            rotateLeft()
     else:
         if note_playing:
             note_playing = False
+            if is_rotating:
+                is_rotating = False
+                stopRotate()
             # print("silent")
 
     return (bytes, pyaudio.paContinue)
