@@ -48,9 +48,11 @@ def stopRotate():
 def attack():
     # pg.click()
     # mouse.click('left')
+    lockOn()
     gamepad.press_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
     gamepad.update()
     time.sleep(0.1)
+    lockOn()
     gamepad.release_button(button=vg.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER)
     gamepad.update()
 

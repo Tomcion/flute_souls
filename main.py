@@ -105,8 +105,8 @@ def callback(bytes, frame_count, time_info, status):
         # print(line)
 
         note = ""
-        # if freq_index == 7 or freq_index == 13 or freq_index == 13:
-        if freq_index == 7:
+        if freq_index == 7 or freq_index == 13 or freq_index == 14:
+        # if freq_index == 7:
             note = "C1"
         elif freq_index == 8:
             note = "D1"
@@ -116,11 +116,11 @@ def callback(bytes, frame_count, time_info, status):
             note = "G1"
         elif freq_index == 11 or freq_index == 12:
             note = "A1"
-        elif freq_index == 13 or freq_index == 14:
-            if 7 in sorted_indicies:
-                note = "C1"
-            else:
-                note = "C2"
+        # elif freq_index == 13 or freq_index == 14:
+        #     if 7 in sorted_indicies:
+        #         note = "C1"
+        #     else:
+        #         note = "C2"
         elif freq_index == 15:
             note = "E2"
         elif freq_index == 16:
